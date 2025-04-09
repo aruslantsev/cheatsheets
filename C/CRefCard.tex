@@ -1,0 +1,595 @@
+% (c) Andrei Ruslantsev 2025
+% Based on Reference Card for C by prof. Joseph H. Silverman and https://en.cppreference.com
+
+\documentclass{article}
+\usepackage[fontsize=9pt]{scrextend}
+\usepackage[a4paper,landscape,left=1cm,right=1cm,top=1cm,bottom=1cm]{geometry}
+\usepackage[utf8]{inputenc}
+\usepackage{multicol}
+\usepackage{xspace}
+\usepackage{supertabular}
+
+\setlength{\parindent}{0pt}
+\emergencystretch=10pt
+
+% \newcommand{<name>}[<args>]{ <code> }
+\newcommand{\mktitle}[1]{{\Large \begin{center}\textbf{#1}\end{center}}\par \vspace{2ex}}
+\newcommand{\mksection}[1]{{\vspace{2ex}\large \textbf{#1}}\par \vspace{2ex}}
+\newcommand{\newstd}{\ensuremath{^{(C99)}}\xspace}
+
+\newcommand{\librarysection}[5]{{\vspace{2ex}\large #1\quad\textbf{\texttt{#2}}}\par\begin{supertabular}{p{#3\linewidth}p{#4\linewidth}}#5\end{supertabular}}
+\newcommand{\funcdescription}[2]{\texttt{#1} & #2 \\}
+\newcommand{\smallheader}[1]{\multicolumn{2}{c}{#1} \\}
+
+% Wrap table over columns
+% https://tex.stackexchange.com/questions/105717/trick-supertabular-into-multicols-in-new-command
+\newcount\n
+\n=0
+\def\tablebody{}
+\makeatletter
+\loop\ifnum\n<100
+        \advance\n by1
+        \protected@edef\tablebody{\tablebody
+                \textbf{\number\n.}& shortText
+                \tabularnewline
+        }
+\repeat
+
+\makeatletter
+\let\mcnewpage=\newpage
+\newcommand{\TrickSupertabularIntoMulticols}{%
+  \renewcommand\newpage{%
+    \if@firstcolumn
+      \hrule width\linewidth height0pt
+      \columnbreak
+    \else
+      \mcnewpage
+    \fi
+  }%
+}
+\makeatother
+
+
+\begin{document}
+\begin{multicols*}{3}
+\TrickSupertabularIntoMulticols
+\mktitle{C Reference Card (ANSI, C99)}
+
+\mksection{Keywords}
+\texttt{auto, break, case, char, const, continue, default, do, double, else,
+enum, extern, float, for, goto, if, inline\newstd, int, long, register,
+restrict\newstd, return, short, signed, sizeof, static, struct, switch,
+typedef, union, unsigned, void, volatile, while}
+
+
+\mksection{Standard libraries}
+\texttt{<assert.h> <complex.h>\newstd <ctype.h> <errno.h> <fenv.h>\newstd <float.h>
+<inttypes.h>\newstd <iso646.h> <limits.h> <locale.h> <math.h> <setjmp.h>
+<signal.h> <stdarg.h> <stdbool.h>\newstd <stddef.h> <stdint.h>\newstd <stdio.h>
+<stdlib.h> <string.h> <tgmath.h>\newstd <time.h> <wchar.h>\newstd <wctype.h>\newstd}
+
+\librarysection{Asserts}{assert.h}{0.2}{0.7}{
+\funcdescription{assert (cond)}{abort the program if \textit{cond} is not true; skipped if defined \texttt{NDEBUG}}
+}
+
+\librarysection{Complex numbers}{complex.h\newstd}{0.3}{0.6}{
+\smallheader{\underline{Types}}
+\funcdescription{imaginary}{imaginary type, use as \texttt{float imaginary}, \texttt{double imaginary}, \texttt{long double imaginary}}
+\funcdescription{complex}{complex type, use with float types as \texttt{imaginary}}
+\smallheader{\underline{Constants}}
+\funcdescription{I}{the complex or imaginary unit constant i }
+\smallheader{\underline{Functions}}
+\funcdescription{creal (z), crealf, creall}{real part}
+\funcdescription{cimag (z) $^{(*)}$}{imaginary part}
+\smallheader{$^{(*)}$ also presented for \texttt{float} and \texttt{long double}}
+\funcdescription{cabs (z) $^{(*)}$}{magnitude}
+\funcdescription{carg (z) $^{(*)}$}{phase angle}
+\funcdescription{conj (z) $^{(*)}$}{complex conjugate}
+\funcdescription{cproj (z) $^{(*)}$}{projection of Riemann sphere}
+\funcdescription{cexp (z) $^{(*)}$}{complex exponential}
+\funcdescription{clog (z) $^{(*)}$}{complex natural logarithm}
+\funcdescription{cpow (z) $^{(*)}$}{complex power}
+\funcdescription{csqrt (zb, zp) $^{(*)}$}{complex square root}
+\funcdescription{csin (z) $^{(*)}$}{complex sine}
+\funcdescription{ccos (z) $^{(*)}$}{complex cosine}
+\funcdescription{ctan (z) $^{(*)}$}{complex tangent}
+\funcdescription{casin (z) $^{(*)}$}{complex arc sine}
+\funcdescription{cacos (z) $^{(*)}$}{complex arc cosine}
+\funcdescription{catan (z) $^{(*)}$}{complex arc tangent}
+\funcdescription{csinh (z) $^{(*)}$}{complex hyperbolic sine}
+\funcdescription{ccosh (z) $^{(*)}$}{complex hyperbolic cosine}
+\funcdescription{ctanh (z) $^{(*)}$}{complex hyperbolic tangent}
+\funcdescription{casinh (z) $^{(*)}$}{complex arc hyperbolic sine}
+\funcdescription{cacosh (z) $^{(*)}$}{complex arc hyperbolic cosine}
+\funcdescription{catanh (z) $^{(*)}$}{complex arc hyperbolic tangent}
+}
+
+\librarysection{Character class tests}{ctype.h}{0.25}{0.65}{
+\funcdescription{isalnum (c)}{alphanumeric?}
+\funcdescription{isalpha (c)}{alphabetic?}
+\funcdescription{islower (c)}{lower case letter?}
+\funcdescription{isupper (c)}{upper case letter?}
+\funcdescription{isdigit (c)}{decimal digit?}
+\funcdescription{isxdigit (c)}{hexadecimal digit?}
+\funcdescription{iscntrl (c)}{control character?}
+\funcdescription{isgraph (c)}{printing character (not incl space)?}
+\funcdescription{isspace (c)}{space, formfeed, newline, cr, tab, vtab?}
+\funcdescription{isblank (c)\newstd}{blanc character?}
+\funcdescription{isprint (c)}{printing character (incl space)?}
+\funcdescription{ispunct (c)}{printing char except space, letter, digit?}
+\funcdescription{tolower (c)}{convert to lower case}
+\funcdescription{toupper (c)}{convert to upper case}
+}
+
+\librarysection{Error handling}{errno.h}{0.3}{0.6}{
+\smallheader{\underline{Macros}}
+\funcdescription{errno}{error number}
+\funcdescription{E2BIG, EACCES, \dots, EXDEV}{standard POSIX-compatible error conditions}
+}
+
+\librarysection{Floating point environment}{fenv.h\newstd}{0.4}{0.5}{
+\smallheader{\underline{Types}}
+\funcdescription{fenv\_t}{entire floating-point environment}
+\funcdescription{fexcept\_t}{all floating-point status flags collectively}
+\smallheader{\underline{Functions}}
+\funcdescription{feclearexcept (int excepts)}{clear the specified FP status flags}
+\funcdescription{fetestexcept (int excepts)}{determine which of the specified FP status flags are set}
+\funcdescription{feraiseexcept (int excepts)}{raise the specified FP exceptions}
+\funcdescription{fegetexceptflag (fexcept\_t* flagp, int excepts), fesetexceptflag (const fexcept\_t* flagp, int excepts)}{copy the state of the specified FP status flags from or to the FP env}
+\funcdescription{fegetround (), fesetround (int round)}{get or set rounding direction}
+\funcdescription{fegetenv (fenv\_t* envp), fesetenv (const fenv\_t* envp)}{save or restore the current FP env}
+\funcdescription{feholdexcept (fenv\_t* envp)}{save the env, clear all status flags and ignore all future errors}
+\funcdescription{feupdateenv (fenv\_t* envp)}{restore the FP env and raise the previously raised exceptions}
+\smallheader{\underline{Macros}}
+\funcdescription{FE\_ALL\_EXCEPT, FE\_DIVBYZERO, FE\_INEXACT, FE\_INVALID, FE\_OVERFLOW, FE\_UNDERFLOW}{FP exceptions}
+\funcdescription{FE\_DOWNWARD, FE\_TONEAREST, FE\_TOWARDZERO, FE\_UPWARD}{rounding direction}
+\funcdescription{FE\_DFL\_ENV}{default FP env}
+}
+
+\librarysection{Float type limits}{float.h}{0.3}{0.6}{
+\funcdescription{FLT\_RADIX}{the radix (integer base) used by the representation of all floating-point types}
+\funcdescription{DECIMAL\_DIG\newstd}{decimal precision required to (de)serialize long double}
+\funcdescription{FLT\_MIN, DBL\_MIN, LDBL\_MIN}{minimum normalized positive \texttt{float}, \texttt{double}, \texttt{long double} value}
+\funcdescription{FLT\_MAX $^{(*)}$}{maximum finit value of \texttt{float}, \texttt{double}, \texttt{long double}}
+\smallheader{$^{(*)}$ also presented for \texttt{double} and \texttt{long double}}
+\funcdescription{FLT\_EPSILON $^{(*)}$}{smallest $x$ so $1.0{\rm f}+x\ne1.0{\rm f}$}
+\funcdescription{FLT\_DIG $^{(*)}$}{number of decimal digits that are guaranteed to be preserved in text - float - text roundtrip}
+\funcdescription{FLT\_MANT\_DIG $^{(*)}$}{number of base-\texttt{FLT\_RADIX} digits that are in the floating-point mantissa}
+\funcdescription{FLT\_MIN\_EXP $^{(*)}$}{minimum exponent}
+\funcdescription{FLT\_MIN\_10\_EXP $^{(*)}$}{minimum exponent}
+\funcdescription{FLT\_MAX\_EXP $^{(*)}$}{maximum exponent}
+\funcdescription{FLT\_MAX\_10\_EXP $^{(*)}$}{maximum exponent}
+\funcdescription{FLT\_ROUNDS}{floating point rounding mode}
+\funcdescription{FLT\_EVAL\_METHOD\newstd}{specifies in what precision all arithmetic operations are done}
+}
+
+\librarysection{Integer Types}{inttypes.h\newstd}{0.5}{0.4}{
+\smallheader{\underline{Types}}
+\funcdescription{imaxdiv\_t}{struct, contains quot and rem (result of division)}
+\smallheader{\underline{Functions}}
+\funcdescription{imaxabs (intmax\_t j)}{absolute value}
+\funcdescription{imaxdiv (intmax\_t numer, intmax\_t denom)}{division, returns \texttt{imaxdiv\_t}}
+\funcdescription{strtoimax (const char* restrict nptr, char** restrict endptr, int base)}{string to integer}
+\funcdescription{strtoumax (const char* restrict nptr, char** restrict endptr, int base)}{string to unsigned integer}
+\funcdescription{wcstoimax (const wchar\_t* restrict nptr, wchar\_t** restrict endptr, int base)}{wide characters to integer}
+\funcdescription{wcstoumax (const wchar\_t* restrict nptr, wchar\_t** restrict endptr, int base)}{wide characters to unsogned integer}
+}
+
+\librarysection{ISO 646}{iso646.h\newstd}{0.3}{0.6}{
+\smallheader{\underline{Macros}}
+\funcdescription{and}{\texttt{\&\&}}
+\funcdescription{and\_eq}{\texttt{\&=}}
+\funcdescription{bitand}{\texttt{\&}}
+\funcdescription{bitor}{\texttt{|}}
+\funcdescription{compl}{\texttt{~}}
+\funcdescription{not}{\texttt{!}}
+\funcdescription{not\_eq}{\texttt{!=}}
+\funcdescription{or}{\texttt{||}}
+\funcdescription{or\_eq}{\texttt{|=}}
+\funcdescription{xor}{\texttt{\^}}
+\funcdescription{xor\_eq}{\texttt{\^}\texttt{=}}  % TODO: FIX
+}
+
+\librarysection{Integer Type Limits}{limits.h}{0.45}{0.45}{
+\funcdescription{CHAR\_BIT}{bits in \texttt{char}}
+\funcdescription{MB\_LEN\_MAX}{maximum number of bytes in a multibyte character}
+\funcdescription{CHAR\_MIN}{min value of \texttt{char}}
+\funcdescription{CHAR\_MAX}{max value of \texttt{char}}
+\funcdescription{SCHAR\_MIN, SHRT\_MIN, INT\_MIN, LONG\_MIN, LLONG\_MIN\newstd}{minimum value for signed types}
+\funcdescription{SCHAR\_MAX, SHRT\_MAX, INT\_MAX, LONG\_MAX, LLONG\_MAX\newstd}{maximum value for signed types}
+\funcdescription{UCHAR\_MAX, USHRT\_MAX, UINT\_MAX, ULONG\_MAX, ULLONG\_MAX\newstd}{maximum value for unsigned types}
+}
+
+\librarysection{Localization}{locale.h}{0.45}{0.45}{
+\smallheader{\underline{Types}}
+\funcdescription{lconv}{formatting details, returned by localeconv}
+\smallheader{\underline{Constants}}
+\funcdescription{NULL}{implementation-defined null pointer constant}
+\funcdescription{LC\_ALL, LC\_COLLATE, LC\_CTYPE, LC\_MONETARY, LC\_NUMERIC, LC\_TIME}{locale categories for setlocale}
+\smallheader{\underline{Functions}}
+\funcdescription{setlocale(int category, const char* locale)}{gets and sets the current C locale}
+\funcdescription{localeconv()}{queries numeric and monetary formatting details of the current locale}
+}
+
+\librarysection{Mathematical Functions}{math.h}{0.5}{0.4}{
+\smallheader{\underline{Types}}
+\funcdescription{float\_t\newstd}{most efficient floating-point type at least as wide as float}
+\funcdescription{double\_t\newstd}{most efficient floating-point type at least as wide as double}
+\smallheader{\underline{Constants}}
+\funcdescription{HUGE\_VALF\newstd, HUGE\_VAL, HUGE\_VALL\newstd}{indicates value too big to be representable (infinity)}
+\funcdescription{INFINITY\newstd}{evaluates to positive infinity or the value guaranteed to overflow a float}
+\funcdescription{NAN\newstd}{evaluates to a quiet NaN of type float}
+\funcdescription{FP\_FAST\_FMA\newstd, FFP\_FAST\_FMA\newstd, FP\_FAST\_FMAL\newstd}{indicates that the fma function generally executes about as fast as, or faster than, a multiply and an add of double operands}
+\funcdescription{FP\_ILOGB0\newstd, FP\_ILOGBNAN\newstd}{evaluates to \texttt{ilogb(x)} if x is zero or NaN, respectively}
+\funcdescription{math\_errhandling\newstd, MATH\_ERRNO\newstd, MATH\_ERREXCEPT\newstd}{defines the error handling mechanism used by the common mathematical functions}
+\funcdescription{FP\_NORMAL\newstd, FP\_SUBNORMAL\newstd, FP\_ZERO\newstd, FP\_INFINITE\newstd, FP\_NAN\newstd}{indicates a floating-point category}
+\smallheader{\underline{Functions}}
+\funcdescription{fabs (x), fabsf\newstd, fabsl\newstd}{absolute value}
+\funcdescription{fmod (x, y) $^{(*)}$\newstd}{remainder of division}
+\smallheader{$^{(*)}$\newstd also presented for \texttt{float} and \texttt{long double}, added in C99}
+\funcdescription{remainder (x, y) \newstd $^{(*)}$\newstd}{signed remainder of division}
+\funcdescription{remquo (x, y, int *quo) \newstd $^{(*)}$\newstd}{signed remainder as well as the three last bits of the division}
+\funcdescription{fma (x, y, z) \newstd $^{(*)}$\newstd}{fused multiply-add operation $x * y + z$}
+\funcdescription{fmax (x, y) \newstd $^{(*)}$\newstd}{determines larger of two values}
+\funcdescription{fmin (x, y) \newstd $^{(*)}$\newstd}{determines smaller of two values}
+\funcdescription{fdim (x, y) \newstd $^{(*)}$\newstd}{positive difference of two floating-point values $max(0, x - y)$}
+\funcdescription{nan (const char* arg) \newstd $^{(*)}$\newstd}{returns a NaN (not-a-number)}
+\funcdescription{exp (x) $^{(*)}$\newstd}{$e^x$}
+\funcdescription{exp2 (x) \newstd $^{(*)}$\newstd}{$2^x$}
+\funcdescription{expm1 (x) \newstd $^{(*)}$\newstd}{$e^x - 1$}
+\funcdescription{log (x) $^{(*)}$\newstd}{natural (base-e) logarithm $ln x$}
+\funcdescription{log10 (x) $^{(*)}$\newstd}{common (base-10) logarithm $log_{10} x$}
+\funcdescription{log2 (x) \newstd $^{(*)}$\newstd}{base-2 logarithm $log_2 x$}
+\funcdescription{log1p (x) \newstd $^{(*)}$\newstd}{$ln (1 + x)$}
+\funcdescription{pow (x, y) $^{(*)}$\newstd}{$x^y$}
+\funcdescription{sqrt (x) $^{(*)}$\newstd}{$\sqrt{x}$}
+\funcdescription{cbrt (x) \newstd $^{(*)}$\newstd}{$\sqrt[3]{x}$}
+\funcdescription{hypot (x, y) \newstd $^{(*)}$\newstd}{$\sqrt{x^2 + y^2}$}
+\funcdescription{sin (x) $^{(*)}$\newstd}{$\sin{x}$}
+\funcdescription{cos (x) $^{(*)}$\newstd}{$\cos{x}$}
+\funcdescription{tan (x) $^{(*)}$\newstd}{$\tan{x}$}
+\funcdescription{asin (x) $^{(*)}$\newstd}{$\arcsin{x}$}
+\funcdescription{acos (x) $^{(*)}$\newstd}{$\arccos{x}$}
+\funcdescription{atan (x) $^{(*)}$\newstd}{$\arctan{x}$}
+\funcdescription{atan2 (y, x) $^{(*)}$\newstd}{$\arctan{x}$ using signs to detect quadrants}
+\funcdescription{sinh (x) $^{(*)}$\newstd}{$\sinh x$}
+\funcdescription{cosh (x) $^{(*)}$\newstd}{$\cosh x$}
+\funcdescription{tanh (x) $^{(*)}$\newstd}{$\tanh x$}
+\funcdescription{asinh (x) \newstd $^{(*)}$\newstd}{$\textrm{arcsinh}\ x$}
+\funcdescription{acosh (x) \newstd $^{(*)}$\newstd}{$\textrm{arccosh}\ x$}
+\funcdescription{atanh (x) \newstd $^{(*)}$\newstd}{$\textrm{arctanh}\ x$}
+\funcdescription{erf (x) \newstd $^{(*)}$\newstd}{error function}
+\funcdescription{erfc (x) \newstd  $^{(*)}$\newstd}{complementary error function}
+\funcdescription{tgamma (x) \newstd $^{(*)}$\newstd}{gamma function}
+\funcdescription{lgamma (x) \newstd $^{(*)}$\newstd}{natural logarithm of gamma function}
+\funcdescription{ceil (x) $^{(*)}$\newstd}{smallest integer not less than the given value}
+\funcdescription{floor (x) $^{(*)}$\newstd}{largest integer not greater than the given value}
+\funcdescription{trunc (x) \newstd $^{(*)}$\newstd}{nearest integer not greater in magnitude}
+\funcdescription{round (x) \newstd  $^{(*)}$\newstd, lround\newstd $^{(*)}$\newstd, llround\newstd  $^{(*)}$\newstd}{rounds to nearest integer, rounding away from zero in halfway cases }
+\funcdescription{nearbyint (x) \newstd $^{(*)}$\newstd}{round to an integer using current rounding mode}
+\funcdescription{rint (x) $^{(*)}$\newstd, lrint $^{(*)}$\newstd, llrint $^{(*)}$\newstd}{round to an integer using current rounding mode with
+exception if the result differs}
+\funcdescription{frexp (arg, int* exp) $^{(*)}$\newstd}{break a number into significand and a power of 2}
+\funcdescription{ldexp (arg, int exp) $^{(*)}$\newstd}{multiply a number by 2 raised to a power}
+\funcdescription{modf (arg, \&iptr) $^{(*)}$\newstd}{break a number into integer and fractional parts}
+\funcdescription{scalbn (arg, int exp) \newstd $^{(*)}$\newstd, scalbln\newstd $^{(*)}$\newstd}{compute efficiently a number times \texttt{FLT\_RADIX} raised to a power}
+\funcdescription{ilogb (x) \newstd $^{(*)}$\newstd}{extract exponent of the given number}
+\funcdescription{logb (x) \newstd $^{(*)}$\newstd}{extract exponent of the given number}
+\funcdescription{nextafter (from, to) \newstd $^{(*)}$\newstd, nexttoward\newstd $^{(*)}$\newstd}{next representable floating-point value towards the given value}
+\funcdescription{copysign (x, y) \newstd $^{(*)}$\newstd}{value with the magnitude of a given value and the sign of another given value}
+\funcdescription{fpclassify (x) \newstd}{classify the given floating-point value}
+\funcdescription{isfinite (x) \newstd}{given number has finite value?}
+\funcdescription{isinf (x) \newstd}{number is infinite?}
+\funcdescription{isnan (x) \newstd}{number is NaN?}
+\funcdescription{isnormal (x) \newstd}{number is normal?}
+\funcdescription{signbit (x) \newstd}{number is negative?}
+\funcdescription{isgreater (x, y) \newstd}{first argument is greater than second?}
+\funcdescription{isgreaterequal (x, y) \newstd}{first argument is greater or equal than second?}
+\funcdescription{isless (x, y) \newstd}{first argument is less than second?}
+\funcdescription{islessequal (x, y) \newstd}{first argument is less or equal than second?}
+\funcdescription{islessgreater (x, y) \newstd}{first argument is less or greater than second?}
+\funcdescription{isunordered (x, y) \newstd}{two values are unordered?}
+}
+
+
+\librarysection{Program Support Utilities}{setjmp.h}{0.45}{0.45}{
+\smallheader{\underline{Types}}
+\funcdescription{jmp\_buf}{execution context type }
+\smallheader{\underline{Functions}}
+\funcdescription{setjmp (jmp\_buf env)}{save context}
+\funcdescription{longjmp (jmp\_buf env, int status)}{jump to specified location }
+}
+
+\librarysection{Program Support}{signal.h}{0.3}{0.6}{
+\smallheader{\underline{Types}}
+\funcdescription{sig\_atomic\_t}{integer type that can be accessed as an atomic entity from an asynchronous signal handler}
+\smallheader{\underline{Macros}}
+\funcdescription{SIGABRT, SIGFPE, SIGILL,SIGINT, SIGSEGV, SIGTERM}{signal types}
+\funcdescription{SIG\_DFL, SIG\_IGN}{signal handling strategies}
+\funcdescription{SIG\_ERR}{error was encountered}
+\smallheader{\underline{Functions}}
+\funcdescription{signal (int sig, void (*handler)(int))}{set signal handler for particular signal}
+\funcdescription{raise (int sig)}{run signal handler for particular signal}
+}
+
+\librarysection{Variable Argument Lists}{stdarg.h}{0.45}{0.45}{
+\smallheader{Function definition: \texttt{type name(t1 arg1, \dots)}}
+\smallheader{\underline{Types}}
+\funcdescription{va\_list}{information needed by all macros}
+\smallheader{\underline{Macros}}
+\funcdescription{va\_start (va\_list ap, lastarg)}{initialize argument pointer \texttt{ap}, \texttt{lastarg} - last named argument}
+\funcdescription{va\_arg (ap, type)}{access next argument}
+\funcdescription{va\_copy (va\_list dest, va\_list src)\newstd}{copy arguments}
+\funcdescription{va\_end (ap)}{end traversal}
+}
+
+\librarysection{Boolean Type}{stdbool.h}{0.45}{0.45}{
+\smallheader{\underline{Macros}}
+\funcdescription{bool}{boolean type definition}
+\funcdescription{true}{integer 1}
+\funcdescription{false}{integer 0}
+}
+
+\librarysection{Types Support}{stddef.h}{0.45}{0.45}{
+\smallheader{\underline{Types}}
+\funcdescription{ptrdiff\_t}{signed int, result of two pointers subtraction}
+\funcdescription{size\_t}{unsigned int returned by \texttt{sizeof}, \texttt{offsetof}}
+\smallheader{\underline{Constants}}
+\funcdescription{NULL}{implementation-defined null pointer constant}
+\smallheader{\underline{Macros}}
+\funcdescription{offsetof(type, member)}{byte offset from the beginning of a struct type to specified member}
+}
+
+\librarysection{Integer Type Support}{stdint.h\newstd}{0.5}{0.4}{
+\smallheader{\underline{Types}}
+\funcdescription{int8\_t, int16\_t, int32\_t, int64\_t}{signed int with exact width}
+\funcdescription{int\_fast8\_t, int\_fast16\_t, int\_fast32\_t, int\_fast64\_t}{fastest signed int with width at least 8, 16, \dots}
+\funcdescription{int\_least8\_t, int\_least16\_t, int\_least32\_t, int\_least64\_t}{smallest signed int with width at least 8, 16, \dots}
+\funcdescription{intmax\_t}{maximum width integer type}
+\funcdescription{intptr\_t}{integer type capable of holding a pointer}
+\funcdescription{uint8\_t, uint16\_t, uint32\_t, uint64\_t}{unsigned int with exact width}
+\funcdescription{uint\_fast8\_t, uint\_fast16\_t, uint\_fast32\_t, uint\_fast64\_t}{fastest unsigned int with width at least 8, 16, \dots}
+\funcdescription{uint\_least8\_t, uint\_least16\_t, uint\_least32\_t, uint\_least64\_t}{smallest unsigned int with width at least 8, 16, \dots}
+\funcdescription{uintmax\_t}{maximum width unsigned integer type}
+\funcdescription{uintptr\_t}{unsigned integer type capable of holding a pointer}
+\smallheader{\underline{Constants}}
+\funcdescription{INT8\_MIN, INT16\_MIN, INT32\_MIN, INT64\_MIN}{minimum value of object of corresponding type}
+\funcdescription{INT\_FAST8\_MIN, INT\_FAST16\_MIN, INT\_FAST32\_MIN, INT\_FAST64\_MIN}{minimum value of object of corresponding type}
+\funcdescription{INT\_LEAST8\_MIN, INT\_LEAST16\_MIN, INT\_LEAST32\_MIN, INT\_LEAST64\_MIN}{minimum value of object of corresponding type}
+\funcdescription{INTPTR\_MIN}{minimum value of intptr\_t object}
+\funcdescription{INTMAX\_MIN}{minimum value of intmax\_t object}
+\funcdescription{INT8\_MAX, INT16\_MAX, INT32\_MAX, INT64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{INT\_FAST8\_MAX, INT\_FAST16\_MAX, INT\_FAST32\_MAX, INT\_FAST64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{INT\_LEAST8\_MAX, INT\_LEAST16\_MAX, INT\_LEAST32\_MAX, INT\_LEAST64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{INTPTR\_MAX}{maximum value of intptr\_t object}
+\funcdescription{INTMAX\_MAX}{maximum value of intmax\_t object}
+\funcdescription{UINT8\_MAX, UINT16\_MAX, UINT32\_MAX, UINT64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{UINT\_FAST8\_MAX, UINT\_FAST16\_MAX, UINT\_FAST32\_MAX, UINT\_FAST64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{UINT\_LEAST8\_MAX, UINT\_LEAST16\_MAX, UINT\_LEAST32\_MAX, UINT\_LEAST64\_MAX}{maximum value of object of corresponding type}
+\funcdescription{UINTPTR\_MAX}{maximum value of uintptr\_t object}
+\funcdescription{UINTMAX\_MAX}{maximum value of uintmax\_t object}
+\smallheader{\underline{Function Macro}}
+\funcdescription{INT8\_C (x), INT16\_C, INT32\_C, INT64\_C}{expands to an int const expression with the type int\_least8\_t, \dots}
+\funcdescription{INTMAX\_C (x)}{expands to an int const expression with the type intmax\_t}
+\funcdescription{UINT8\_C (x), UINT16\_C, UINT32\_C, UINT64\_C}{expands to an int const expression with the type uint\_least8\_t, \dots}
+\funcdescription{UINTMAX\_C (x)}{expands to an int const expression with the type uintmax\_t}
+}
+
+\librarysection{Standard input/output}{stdio.h}{0.45}{0.45}{
+\smallheader{\underline{Types}}
+\funcdescription{FILE}{object type, capable of holding all information needed to control a C I/O stream}
+\funcdescription{fpos\_t}{non-array complete object type, capable of uniquely specifying a position and multibyte parser state in a file}
+\smallheader{\underline{Predefined standard streams}}
+\funcdescription{stdin, stdout, stderr}{expression of type FILE* associated with corresponding stream}
+\smallheader{\underline{Functions}}
+\funcdescription{fopen ("filename", "mode")}{open file,  returns \texttt{FILE *fp}}
+\funcdescription{freopen ("filename", "mode", fp)}{open an existing stream \texttt{FILE *fp} with a different name, returns \texttt{FILE *}}
+\funcdescription{fclose (fp)}{close a file}
+\funcdescription{fflush (fp)}{synchronizes an output stream with the actual file}
+\funcdescription{setbuf (fp, char *buffer)}{sets the buffer for a file stream}
+\funcdescription{setvbuf (fp, char *buffer, int mode, size\_t size)}{sets the buffer and its size for a file stream}
+\funcdescription{fread (void *buffer, size\_t size, size\_t count, fp)}{reads from a file \texttt{count} objects of size \texttt{size} to \texttt{buffer}}
+\funcdescription{fwrite (const void* buffer, size\_t size, size\_t count, fp)}{writes to a file \texttt{count} objects of size \texttt{size} from \texttt{buffer}}
+\funcdescription{fgetc (fp), getc (fp)}{gets a character from a file stream}
+\funcdescription{fgets (char *str, int count, fp)}{gets a character string with length \texttt{count - 1} from a file stream}
+\funcdescription{fputc (int ch, fp), putc (int ch, fp)}{writes a character to a file stream}
+\funcdescription{fputs (char *str, fp)}{writes a character string to a file stream}
+\funcdescription{getchar ()}{reads a character from \texttt{stdin}, equivalent to \texttt{getc (stdin)}}
+\funcdescription{gets (char *str)}{reads a character string from \texttt{stdin} until newline or \texttt{EOF}}
+\funcdescription{putchar (int ch)}{writes a character to stdout, equivalent to \texttt{putc (ch, stdout)}}
+\funcdescription{puts (char* str)}{writes a character string + \texttt{\textbackslash{}n} to stdout}
+\funcdescription{ungetc (int ch, fp)}{puts a character back into a file stream}
+\funcdescription{scanf (const char *format, ...), fscanf (fp, const char *format, ...), sscanf (const char *buffer, const char *format, ...)}{reads formatted input from stdin, a file stream or a buffer}
+\funcdescription{vscanf (const char *restrict format, va\_list vlist)\newstd, vfscanf (fp, const char *restrict format, va\_list vlist)\newstd, vsscanf (const char *restrict buffer, const char *restrict format, va\_list vlist)\newstd}{reads formatted input from stdin, a file stream or a buffer using variable argument list}
+\funcdescription{printf (const char* format, ...), fprintf (fp, const char* format, ...), sprintf (char* buffer, const char* format, ...), snprintf (char* restrict buffer, size\_t bufsz, const char* restrict format, ...)\newstd}{prints formatted output to stdout, a file stream or a buffer}
+\funcdescription{vprintf (const char* format, va\_list vlist), vfprintf (fp, const char* format, va\_list vlist), vsprintf (char* buffer, const char* format, va\_list vlist), vsnprintf (char* restrict buffer, size\_t bufsz, const char* restrict format, va\_list vlist)\newstd}{prints formatted output to stdout, a file stream or a buffer using variable argument list}
+\funcdescription{ftell (fp)}{returns the current file position indicator, useful for \texttt{fseek}}
+\funcdescription{fgetpos (fp, fpos\_t* pos)}{gets the file position indicator, useful for \texttt{fsetpos}}
+\funcdescription{fseek (fp, long offset, int origin)}{moves the file position indicator to a specific location in a file, origin values: \texttt{SEEK\_SET}, \texttt{SEEK\_CUR}, \texttt{SEEK\_END}}
+\funcdescription{fsetpos (fp, const fpos\_t* pos)}{moves the file position indicator to a specific location in a file}
+\funcdescription{rewind (fp)}{moves the file position indicator to the beginning in a file}
+\funcdescription{clearerr(fp)}{clears errors}
+\funcdescription{feof (fp)}{checks for the end-of-file}
+\funcdescription{ferror (fp)}{checks for a file error}
+\funcdescription{perror (const char *s)}{displays a character string corresponding of the current error to stderr}
+\funcdescription{remove (const char* pathname)}{erases a file}
+\funcdescription{rename (const char* old\_filename, const char* new\_filename)}{renames a file}
+\funcdescription{tmpfile ()}{returns a pointer to a temporary file}
+\funcdescription{tmpnam (char *filename)}{returns a unique filename}
+\smallheader{\underline{Macro constants}}
+\funcdescription{EOF}{integer constant expression of type int and negative value}
+\funcdescription{FOPEN\_MAX}{maximum number of files that can be open simultaneously}
+\funcdescription{FILENAME\_MAX}{size needed for an array of char to hold the longest supported file name}
+\funcdescription{BUFSIZ}{size of the buffer used by setbuf}
+\funcdescription{\_IOFBF, \_IOLBF, \_IONBF}{argument to setvbuf indicating fully buffered, line buffered, unbuffered I/O}
+\funcdescription{SEEK\_SET, SEEK\_CUR, SEEK\_END}{argument to fseek indicating seeking from beginning, current position, end of the file}
+\funcdescription{TMP\_MAX}{maximum number of unique filenames that can be generated by \texttt{tmpnam}}
+\funcdescription{L\_tmpnam}{size needed for an array of char to hold the result of tmpnam}
+}
+
+
+% \librarysection{Input/Output}{stdio.h}
+% \metax{\bf Standard I/O}{}
+% \metax{standard input stream}{stdin}
+% \metax{standard output stream}{stdout}
+% \metax{standard error stream}{stderr}
+% \metax{end of file (type is \kbd{int})}{EOF}
+% \metax{buffer size}{BUFSIZ}
+% \metax{get a character}{getchar()}
+% \metax{print a character}{putchar(\chr)}
+% \metax{print formatted data}{printf("\format",\arg$_1$,\dots)}
+% \metax{print to string \kbd{s}}{sprintf(s,"\format",\arg$_1$,\dots)}
+% \metax{read formatted data}{scanf("\format",\&\name$_1$,\dots)}
+% \metax{read from string \kbd{s}}{sscanf(s,"\format",\&\name$_1$,\dots)}
+% \metax{print string \kbd{s}}{puts(s)}
+% \metax{\bf File I/O}{}
+% \metax{declare file pointer}{FILE *\fp;}
+% \metax{pointer to named file}{fopen("\name","\mode")}
+% \metax{\qquad modes: \kbd{r} (read), \kbd{w} (write), \kbd{a}
+% (append), \kbd{b} (binary)\hidewidth}{}
+% \metax{get a character}{getc(\fp)}
+% \metax{write a character}{putc(\chr,\fp)}
+% \metax{push one char back to \fp}{ungetc(\chr,\fp)}
+% \metax{\qquad only one push back is guaranteed\hidewidth}{}
+% \metax{write to file}{fprintf(\fp,"\format",\arg$_1$,\dots)}
+% \metax{read from file}{fscanf(\fp,"\format",\arg$_1$,\dots)}
+% \metax{read and store \kbd{n} elts to \kbd{*ptr}}
+%       {fread(\kbd{*ptr},eltsize,\kbd{n},\fp)}
+% \metax{write \kbd{n} elts from \kbd{*ptr} to file}
+%       {fwrite(\kbd{*ptr},eltsize,\kbd{n},\fp)}
+% \metax{close file}{fclose(\fp)}
+% \metax{non-zero if error}{ferror(\fp)}
+% \metax{non-zero if already reached EOF}{feof(\fp)}
+% \metax{read line to string \kbd{s} ($<$ \kbd{max} chars)}{fgets(s,max,\fp)}
+% \metax{write string \kbd{s}}{fputs(s,\fp)}
+% \metax{remove file \kbd{filename}}{remove(filename)}
+% \metax{rename file}{rename(old\_name,new\_name)}
+% \metax{{\bf Codes for Formatted I/O}: \kbd{"\%-+ 0$w.pmc$"\hidewidth}}{}
+% \halign{\qquad\hfil\kbd{#}\enspace\hfil&#\hfil\cr
+% -&left justify\cr
+% +&print with sign\cr
+% {\it space}&print space if no sign\cr
+% 0&pad with leading zeros\cr
+% $w$&min field width\cr
+% $p$&precision\cr
+% $m$&conversion character:\cr
+% &\qquad\kbd{h}\quad short,\qquad \kbd{l}\quad long,
+% \qquad \kbd{L}\quad long double\cr
+% $c$&conversion character:\cr}
+% \halign{\qquad#&&\qquad\hfil\kbd{#}\enspace\hfil&#\hfil\cr
+% &d,i&integer&u&unsigned\cr
+% &c&single char&s&char string\cr
+% &f&double (\kbd{printf})&e,E&exponential\cr
+% &f&float (\kbd{scanf})&lf&double (\kbd{scanf})\cr
+% &o&octal&x,X&hexadecimal\cr
+% &p&pointer&n&number of chars written\cr
+% &g,G&same as \kbd{f} or \kbd{e,E} depending on exponent\hidewidth\cr}
+
+
+
+\librarysection{Wide character sypport}{wchar.h\newstd}{0.45}{0.45}{
+\smallheader{\underline{Functions}}
+\funcdescription{fwide (fp, int mode)}{switches a file stream between wide character I/O and narrow character I/O}
+\funcdescription{fgetwc (fp), getwc (fp)}{gets a wide character from a file stream}
+\funcdescription{fgetws (wchar\_t* str, int count, fp)}{gets a wide string of length \texttt{count - 1} from a file stream}
+\funcdescription{fputwc (wchar\_t ch, fp), putwc (wchar\_t ch, fp)}{writes a wide character to a file stream}
+\funcdescription{fputws (wchar\_t *str, fp)}{writes a wide string to a file stream}
+\funcdescription{getwchar ()}{reads a wide character from stdin}
+\funcdescription{putwchar (wchar\_t ch)}{writes a wide character to stdout}
+\funcdescription{ungetwc (wint\_t ch, fp)}{puts a wide character back into a file stream}
+\funcdescription{wscanf (const wchar\_t *format, ...), fwscanf (fp, const wchar\_t *format, ...), swscanf (const wchar\_t *buffer, const wchar\_t *format, ...)}{reads formatted wide character input from stdin, a file stream or a buffer}
+\funcdescription{vwscanf (const wchar\_t *restrict format, va\_list vlist), vfwscanf (fp, const wchar\_t *restrict format, va\_list vlist), vswscanf (const wchar\_t *restrict buffer, const wchar\_t *restrict format, va\_list vlist)}{reads formatted wide character input from stdin, a file stream or a buffer using variable argument list}
+\funcdescription{wprintf (const wchar\_t* format, ...), fwprintf (fp, const wchar\_t* format, ...), swprintf (wchar\_t* buffer, size\_t bufsz, const wchar\_t* format, ...)}{prints formatted wide character output to stdout, a file stream or a buffer}
+\funcdescription{vwprintf (const wchar\_t* format, va\_list vlist), vfwprintf (fp, const wchar\_t* format, va\_list vlist), vswprintf (wchar\_t* buffer, size\_t bufsz, const wchar\_t* format, va\_list vlist)}{prints formatted wide character output to stdout, a file stream or a buffer using variable argument list}
+}
+
+
+\librarysection{Integer Type Limits}{limits.h}{0.45}{0.45}{
+\smallheader{\underline{Functions}}
+\funcdescription{CHAR\_BIT}{bits in \texttt{char}}
+}
+
+\librarysection{Integer Type Limits}{limits.h}{0.45}{0.45}{
+\smallheader{\underline{Functions}}
+\funcdescription{CHAR\_BIT}{bits in \texttt{char}}
+}
+
+% \librarysection{String Operations}{string.h}
+% \leftline{\quad \kbd{s} is a string; \kbd{cs}, \kbd{ct} are
+% constant strings\hidewidth}{}
+% \metax{length of \kbd{s}}{strlen(s)}
+% \metax{copy \kbd{ct} to \kbd{s}}{strcpy(s,ct)}
+% \metax{\qquad only first \kbd{n} chars}{strncpy(s,ct,n)}
+% \metax{concatenate \kbd{ct} after \kbd{s}}{strcat(s,ct)}
+% \metax{\qquad only first \kbd{n} chars}{strncat(s,ct,n)}
+% \metax{compare \kbd{cs} to \kbd{ct}}{strcmp(cs,ct)}
+% \metax{\qquad only first \kbd{n} chars}{strncmp(cs,ct,n)}
+% \metax{pointer to first \kbd{c} in \kbd{cs}}{strchr(cs,c)}
+% \metax{pointer to last \kbd{c} in \kbd{cs}}{strrchr(cs,c)}
+% \metax{copy \kbd{n} chars from \kbd{ct} to \kbd{s}}{memcpy(s,ct,n)}
+% \metax{copy \kbd{n} chars from \kbd{ct} to \kbd{s} (may overlap)}{memmove(s,ct,n)}
+% \metax{compare \kbd{n} chars of \kbd{cs} with \kbd{ct}}{memcmp(cs,ct,n)}
+% \metax{pointer to first \kbd{c} in first \kbd{n} chars of \kbd{cs}}{memchr(cs,c,n)}
+% \metax{put \kbd{c} into first \kbd{n} chars of \kbd{s}}{memset(s,c,n)}
+
+% \librarysection{Standard Utility Functions}{stdlib.h}
+% \metax{absolute value of \kbd{int n}}{abs(n)}
+% \metax{absolute value of \kbd{long n}}{labs(n)}
+% \metax{quotient and remainder of \kbd{int}s \kbd{n},\kbd{d}}{div(n,d)}
+% \metax{\qquad returns structure with \kbd{div\underscore{}t.quot}
+%     and \kbd{div\underscore{}t.rem}\hidewidth}{}
+% \metax{quotient and remainder of \kbd{long}s \kbd{n},\kbd{d}}{ldiv(n,d)}
+% \metax{\qquad returns structure with \kbd{ldiv\underscore{}t.quot}
+%     and \kbd{ldiv\underscore{}t.rem}\hidewidth}{}
+% \metax{pseudo-random integer {\tt[0,RAND\underscore{}MAX]}}{rand()}
+% \metax{set random seed to \kbd{n}}{srand(n)}
+% \metax{terminate program execution}{exit(status)}
+% \metax{pass string \kbd{s} to system for execution}{system(s)}
+% \metax{\bf Conversions}{}
+% \metax{convert string \kbd{s} to double}{atof(s)}
+% \metax{convert string \kbd{s} to integer}{atoi(s)}
+% \metax{convert string \kbd{s} to long}{atol(s)}
+% \metax{convert prefix of \kbd{s} to \kbd{double}}{strtod(s,\&endp)}
+% \metax{convert prefix of \kbd{s} (base \kbd{b}) to
+% \kbd{long}}{strtol(s,\&endp,b)}
+% \metax{\qquad same, but \kbd{unsigned long}}{strtoul(s,\&endp,b)}
+% \metax{\bf Storage Allocation}{}
+% \metax{allocate storage}{malloc(size), calloc(nobj,size)}
+% \metax{change size of storage}{newptr = realloc(ptr,size);}
+% \metax{deallocate storage}{free(ptr);}
+% \metax{\bf Array Functions}{}
+% \metax{search \kbd{array} for \kbd{key}}{bsearch(key,array,n,size,cmpf)}
+% \metax{sort \kbd{array} ascending order}{qsort(array,n,size,cmpf)}
+
+% \librarysection{Time and Date Functions}{time.h}
+% \metax{processor time used by program}{clock()}
+% \metax{\Example \kbd{clock()/CLOCKS\underscore{}PER\underscore{}SEC}
+% is time in seconds\hidewidth}{}
+% \metax{current calendar time}{time()}
+% \metax{\kbd{time$_2$-time$_1$} in seconds
+% (\kbd{double})}{difftime(time$_2$,time$_1$)}
+% \metax{arithmetic types representing
+% times}{clock\underscore{}t,time\underscore{}t}
+% \key{structure type for calendar time comps}{struct tm}
+% \halign{\qquad\tt#\hfil&\qquad#\hfil\cr
+% tm\underscore{}sec&seconds after minute\cr
+% tm\underscore{}min&minutes after hour\cr
+% tm\underscore{}hour&hours since midnight\cr
+% tm\underscore{}mday&day of month\cr
+% tm\underscore{}mon&months since January\cr
+% tm\underscore{}year&years since 1900\cr
+% tm\underscore{}wday&days since Sunday\cr
+% tm\underscore{}yday&days since January 1\cr
+% tm\underscore{}isdst&Daylight Savings Time flag\cr}
+% \metax{convert local time to calendar time}{mktime(tp)}
+% \metax{convert time in \kbd{tp} to string}{asctime(tp)}
+% \metax{convert calendar time in \kbd{tp} to local time}{ctime(tp)}
+% \metax{convert calendar time to GMT}{gmtime(tp)}
+% \metax{convert calendar time to local time}{localtime(tp)}
+% \metax{format date and time info}{strftime(s,smax,"\format",tp)}
+% \metax{\qquad \kbd{tp} is a pointer to a structure of type
+% \kbd{tm}\hidewidth}{}
+
+
+\end{multicols*}
+\end{document}
